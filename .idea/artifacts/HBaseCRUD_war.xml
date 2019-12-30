@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="HBaseCRUD:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>HBaseCRUD</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="HBaseCRUD-Unknown.war">
+      <element id="artifact" artifact-name="HBaseCRUD:war exploded" />
+    </root>
+  </artifact>
+</component>

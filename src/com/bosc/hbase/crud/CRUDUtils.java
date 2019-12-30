@@ -86,7 +86,7 @@ public class CRUDUtils {
     }
 
     public HashMap<String, List<String>> scanAll(String tableName) throws IOException{
-        HashMap<String, List<String>> resultSet = new HashMap<>();
+        HashMap<String, List<String>> resultSet = new HashMap<String, List<String>>();
 
         Scan scan = new Scan();
         Table table = this.connection.getTable(TableName.valueOf(tableName));
@@ -102,7 +102,7 @@ public class CRUDUtils {
                 String qualifier  = Bytes.toString(CellUtil.cloneQualifier(cell));  //取到修饰名
                 String value = Bytes.toString(CellUtil.cloneValue(cell));  //取到值
 
-                String values = join(new String[]{String.valueOf(timestamp), family, qualifier, value}, ",");
+                final String values = join(new String[]{String.valueOf(timestamp), family, qualifier, value}, ",");
 
                 if(resultSet.containsKey(rowKey)) {
                     resultSet.get(rowKey).add(values);
@@ -162,10 +162,10 @@ public class CRUDUtils {
         if (cells != null) {
             for (Cell cell : cells) {
                 String rowKey = Bytes.toString(CellUtil.cloneRow(cell));  //取行键
-                long timestamp = cell.getTimestamp();  //取到时间戳
-                String family = Bytes.toString(CellUtil.cloneFamily(cell));  //取到族列
-                String qualifier  = Bytes.toString(CellUtil.cloneQualifier(cell));  //取到修饰名
-                String value = Bytes.toString(CellUtil.cloneValue(cell));  //取到值
+                final long timestamp = cell.getTimestamp();  //取到时间戳
+                final String family = Bytes.toString(CellUtil.cloneFamily(cell));  //取到族列
+                final String qualifier  = Bytes.toString(CellUtil.cloneQualifier(cell));  //取到修饰名
+                final String value = Bytes.toString(CellUtil.cloneValue(cell));  //取到值
 
                 returnSet.add(new HashMap<String, String>(){{
                     put("timestamp", String.valueOf(timestamp));
@@ -184,7 +184,7 @@ public class CRUDUtils {
     }
 
     public HashMap<String, String> getByKey(String tableName, String keyName, String familyName, String qualifierName) throws IOException{
-        HashMap<String, String> returnSet = new HashMap<>();
+        HashMap<String, String> returnSet = new HashMap<String, String>();
         Table table = this.connection.getTable(TableName.valueOf(tableName));
         Get get = new Get(Bytes.toBytes(keyName));
         get.addColumn(Bytes.toBytes(familyName), Bytes.toBytes(qualifierName));
