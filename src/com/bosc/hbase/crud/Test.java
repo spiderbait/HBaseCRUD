@@ -31,13 +31,12 @@ public class Test {
             options.addOption("h", "help", false, "Print this usage information.");
             options.addOption("f", "full", false, "Whether export full or zengliang");
             CommandLine commandLine = parser.parse(options, args);
-            if(options.hasOption("f")) {
+            if(commandLine.hasOption("f")) {
                 System.out.println("zengliang");
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
 
     }
 }
