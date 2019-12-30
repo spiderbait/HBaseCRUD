@@ -25,7 +25,7 @@ public class Upsert {
 
     public List<String> getFileList(String path) {
         File dir = new File((path));
-        List<String> fileList = new ArrayList<>();
+        List<String> fileList = new ArrayList<String>();
         if(!dir.exists() || !dir.isDirectory()) {
             System.out.println("Specified path does not exist or is not an directory.");
         } else {
@@ -42,7 +42,7 @@ public class Upsert {
     }
 
     public HashMap<String, String> parsePath(String path) {
-        HashMap<String, String> fieldMapping = new HashMap<>();
+        HashMap<String, String> fieldMapping = new HashMap<String, String>();
         String[] pathSplit = path.split("/");
         String fileName = pathSplit[pathSplit.length - 1];
         String[] fileNameSplit = fileName.split("_");
@@ -111,8 +111,8 @@ public class Upsert {
     }
 
     public static void main(String[] args) throws IOException{
-        String path = "/Users/tianzhuoli/IdeaProjects/HBaseCRUD/src/com/bosc/hbase/crud/test";
-        Upsert upst = new Upsert("127.0.0.1", "buffering_tables", "@!@");
+        String path = "E:\\Projects\\Java\\HBaseCRUD\\src\\com\\bosc\\hbase\\crud\\test";
+        Upsert upst = new Upsert("192.168.1.200", "buffering_tables", "@!@");
         upst.process(path);
     }
 }

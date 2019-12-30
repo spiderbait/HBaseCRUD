@@ -127,7 +127,7 @@ public class Export {
             CommandLineParser parser = new BasicParser();
             Options options = new Options();
             options.addOption("h", "help", false, "Print this usage information.");
-            options.addOption("-i", "increment", true, "Whether export full or increasingly");
+            options.addOption("i", "increment", true, "Whether export full or increasingly");
             CommandLine commandLine = parser.parse(options, args);
             if(commandLine.hasOption("f")) {
                 System.out.println("increasingly");
@@ -135,7 +135,7 @@ public class Export {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Export e = new Export("127.0.0.1", "buffering_tables", "@!@", "/Users/tianzhuoli/IdeaProjects/HBaseCRUD/src/com/bosc/hbase/crud/output");
+        Export e = new Export("192.168.1.200", "buffering_tables", "@!@", "/Users/tianzhuoli/IdeaProjects/HBaseCRUD/src/com/bosc/hbase/crud/output");
         e.export("xianzhi", "@!@");
     }
 }
