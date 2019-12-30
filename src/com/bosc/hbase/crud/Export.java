@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.cli.*;
+
 public class Export {
 
     private String seperator;
@@ -121,6 +123,18 @@ public class Export {
     }
 
     public static void main(String[] args) throws IOException{
+        try {
+            CommandLineParser parser = new BasicParser();
+            Options options = new Options();
+            options.addOption("h", "help", false, "Print this usage information.");
+            options.addOption("-i", "increment", true, "Whether export full or increasingly");
+            CommandLine commandLine = parser.parse(options, args);
+            if(commandLine.hasOption("f")) {
+                System.out.println("increasingly");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         Export e = new Export("127.0.0.1", "buffering_tables", "@!@", "/Users/tianzhuoli/IdeaProjects/HBaseCRUD/src/com/bosc/hbase/crud/output");
         e.export("xianzhi", "@!@");
     }
