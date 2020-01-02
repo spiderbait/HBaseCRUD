@@ -1,4 +1,4 @@
-package com.bosc.hbase.crud;
+package com.bosc.hbase.crud.utils;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.*;
@@ -12,13 +12,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class CRUDUtils {
+public class CRUDUtil {
 
     private Admin admin = null;
     private Connection connection = null;
     private boolean debugFlag;
 
-    public CRUDUtils(String hostAddress, boolean debugFlag) {
+    public CRUDUtil(String hostAddress, boolean debugFlag) {
         try {
             Configuration conf = HBaseConfiguration.create();
             conf.set("hbase.zookeeper.quorum", hostAddress);
@@ -30,7 +30,7 @@ public class CRUDUtils {
         }
     }
 
-    public CRUDUtils(String hostAddress) {
+    public CRUDUtil(String hostAddress) {
         try {
             Configuration conf = HBaseConfiguration.create();
             conf.set("hbase.zookeeper.quorum", hostAddress);
@@ -256,5 +256,16 @@ public class CRUDUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isContains(int[] numbers, int number) {
+        boolean isContains = false;
+        for(int n: numbers) {
+            if(n == number) {
+                isContains = true;
+                break;
+            }
+        }
+        return isContains;
     }
 }

@@ -1,5 +1,10 @@
 package com.bosc.hbase.crud;
 
+import com.bosc.hbase.crud.conf.Config;
+import com.bosc.hbase.crud.utils.CLParser;
+import com.bosc.hbase.crud.utils.CRUDUtil;
+import org.apache.commons.cli.*;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,12 +17,16 @@ public class Upsert {
     private String seperator;
     private String[] familyColumns = {"cols"};
     private String bufferingNamespace;
-    private CRUDUtils u;
+    private String configPath;
+    private Config config;
+    private CRUDUtil u;
 
-    public Upsert(String hostAddress, String bufferingNamespace, String seperator) throws IOException {
+    public Upsert(String hostAddress, String bufferingNamespace, String seperator, String configPath) throws IOException {
         this.seperator = seperator;
         this.bufferingNamespace = bufferingNamespace;
-        this.u = new CRUDUtils(hostAddress);
+        this.configPath = configPath;
+        this.u = new CRUDUtil(hostAddress);
+        this.config = new Config(this.configPath);
         if(!u.isNamespaceExists(this.bufferingNamespace)) {
             u.createNamespace(this.bufferingNamespace);
         }
@@ -41,6 +50,12 @@ public class Upsert {
         return fileList;
     }
 
+    public boolean isFileNameValid(String fileName) {
+        String[] fileNameSplit = fileName.split("_");
+
+        return true;
+    }
+
     public HashMap<String, String> parsePath(String path) {
         HashMap<String, String> fieldMapping = new HashMap<String, String>();
         String[] pathSplit = path.split("/");
@@ -53,7 +68,7 @@ public class Upsert {
         return fieldMapping;
     }
 
-    private void upsertFromFile(String path, int primaryKeyIndex) {
+    private void upsertFromFile(String path) {
         InputStream inputStream = null;
         Reader reader = null;
         BufferedReader bufferedReader = null;
@@ -64,8 +79,9 @@ public class Upsert {
             reader = new InputStreamReader(inputStream);
             bufferedReader = new BufferedReader(reader);
             String line = null;
+            int[] primaryKeyIndices = this.config.getTablePrimaryKeyIndex(fieldMapping.get("table"));
             while ((line = bufferedReader.readLine()) != null) {
-                putByLine(fieldMapping.get("table"), line, primaryKeyIndex);
+                putByLine(fieldMapping.get("table"), line, primaryKeyIndices);
             }
             inputStream.close();
             file.delete();
@@ -74,7 +90,9 @@ public class Upsert {
         }
     }
 
-    private void putByLine(String tableName, String line, int primaryKeyIndex) throws IOException{
+
+
+    private void putByLine(String tableName, String line, int[] primaryKeyIndices) throws IOException{
         String[] lineSplit = line.split(this.seperator);
         String nsTableName = this.bufferingNamespace + ":" + tableName;
         if(!u.isTableExists(nsTableName)) {
@@ -82,17 +100,16 @@ public class Upsert {
         }
         int i = 0;
         boolean flag = true;
-
         for(String col: lineSplit) {
-            if(i == primaryKeyIndex && flag) {
+            if(this.u.isContains(primaryKeyIndices, i) && flag) {
                 flag = false;
                 continue;
             }
             String columnName = "col" + i;
-            u.putByRow(nsTableName, lineSplit[primaryKeyIndex], this.familyColumns[0], columnName, col);
+            u.putByRow(nsTableName, lineSplit[primaryKeyIndices], this.familyColumns[0], columnName, col);
             i ++;
         }
-        u.putByRow(nsTableName, "primary_key_index", this.familyColumns[0], "primary_key_index", String.valueOf(primaryKeyIndex));
+//        u.putByRow(nsTableName, "primary_key_index", this.familyColumns[0], "primary_key_index", String.valueOf(primaryKeyIndex));
     }
 
     public void printInfo(String info) {
@@ -105,14 +122,28 @@ public class Upsert {
     public void process(String path) {
         List<String> fileList = getFileList(path);
         for(String filePath: fileList) {
-            upsertFromFile(filePath, 0);
+            upsertFromFile(filePath);
             System.out.println(filePath + " loaded.");
         }
     }
 
     public static void main(String[] args) throws IOException{
-        String path = "E:\\Projects\\Java\\HBaseCRUD\\src\\com\\bosc\\hbase\\crud\\test";
-        Upsert upst = new Upsert("192.168.1.200", "buffering_tables", "@!@");
-        upst.process(path);
+        try {
+            CLParser clParser = new CLParser();
+            CommandLine commandLine = clParser.parse(args);
+            String hostAddress = commandLine.hasOption("H")? commandLine.getOptionValue("H"): "127.0.0.1";
+            String bufferingNamespace = commandLine.hasOption("n")? commandLine.getOptionValue("n"): "buffering_tables";
+            String seperator = commandLine.hasOption("s")? commandLine.getOptionValue("s"): "@!@";
+            String configPath = commandLine.hasOption("c")? commandLine.getOptionValue("c"): "file2hbase.conf";
+            if(commandLine.hasOption("p")) {
+                String path = commandLine.getOptionValue("p");
+                Upsert upst = new Upsert(hostAddress, bufferingNamespace, seperator, configPath);
+                upst.process(path);
+            } else {
+                System.out.println("Please specify file input path: ");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
