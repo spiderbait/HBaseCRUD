@@ -21,7 +21,7 @@ public class Main {
                     Upsert upst = new Upsert(hostAddress, bufferingNamespace, seperator, configPath);
                     upst.process(path);
                 } else {
-                    System.out.println("Please specify file input path: ");
+                    System.out.println("Please specify file input path.");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -47,5 +47,6 @@ public class Main {
         } else {
             System.out.println("Please specify whether upsert or export.");
         }
+        System.out.println("Process completed.");
     }
 }

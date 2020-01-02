@@ -74,8 +74,7 @@ public class Export {
         FileOutputStream fos = new FileOutputStream(file);
         String nsTableName = this.bufferingNamespace + ":" + tableName;
         HashMap<String, List<String>> results = this.u.scanAll(nsTableName);
-        int primaryKeyIndex = this.config.getTablePrimaryKeyIndex(tableName);
-//        System.out.println(primaryKeyIndex);
+//        int[] primaryKeyIndex = this.config.getTablePrimaryKeyIndex(tableName);
         for(String rowKey: results.keySet()) {
             String[] row = new String[results.get(rowKey).size()];
             for(String e: results.get(rowKey)) {
@@ -85,7 +84,7 @@ public class Export {
                 int index = Integer.parseInt(qualifier.split("col")[qualifier.split("col").length - 1]);
                 row[index] = value;
             }
-            row = insert(row, primaryKeyIndex, rowKey);
+//            row = insert(row, primaryKeyIndex, rowKey);
             String line = this.u.join(row, seperator) + "\n";
             fos.write(line.getBytes());
 //            System.out.print(line);
@@ -106,7 +105,7 @@ public class Export {
         FileOutputStream fos = new FileOutputStream(file);
         String nsTableName = this.bufferingNamespace + ":" + tableName;
         HashMap<String, List<String>> results = this.u.scanAll(nsTableName);
-        int primaryKeyIndex = this.config.getTablePrimaryKeyIndex(tableName);
+//        int primaryKeyIndex = this.config.getTablePrimaryKeyIndex(tableName);
 
 //        System.out.println(primaryKeyIndex);
         for(String rowKey: results.keySet()) {
@@ -124,7 +123,7 @@ public class Export {
                 row[index] = value;
             }
             if(isYesterdayUpdated) {
-                row = insert(row, primaryKeyIndex, rowKey);
+//                row = insert(row, primaryKeyIndex, rowKey);
                 String line = this.u.join(row, seperator) + "\n";
                 fos.write(line.getBytes());
                 System.out.print(line);

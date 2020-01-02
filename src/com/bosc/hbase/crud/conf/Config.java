@@ -21,7 +21,7 @@ public class Config {
             bufferedReader = new BufferedReader(reader);
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
-                String[] lineSplit = line.split("\t");
+                String[] lineSplit = line.split("~");
                 String tn = lineSplit[0];
                 String i = lineSplit[1];
 

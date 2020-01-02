@@ -90,8 +90,6 @@ public class Upsert {
         }
     }
 
-
-
     private void putByLine(String tableName, String line, int[] primaryKeyIndices) throws IOException{
         String[] lineSplit = line.split(this.seperator);
         String nsTableName = this.bufferingNamespace + ":" + tableName;
@@ -99,17 +97,21 @@ public class Upsert {
             u.createTable(nsTableName, this.familyColumns);
         }
         int i = 0;
+        int pkn = 0;
         boolean flag = true;
+        String[] primaryKeys = new String[primaryKeyIndices.length];
+
+        for(int n: primaryKeyIndices) {
+            primaryKeys[pkn] = lineSplit[n - 1];
+            pkn ++;
+        }
+        String primaryKey = this.u.join(primaryKeys, ",");
+
         for(String col: lineSplit) {
-            if(this.u.isContains(primaryKeyIndices, i) && flag) {
-                flag = false;
-                continue;
-            }
             String columnName = "col" + i;
-            u.putByRow(nsTableName, lineSplit[primaryKeyIndices], this.familyColumns[0], columnName, col);
+            u.putByRow(nsTableName, primaryKey, this.familyColumns[0], columnName, col);
             i ++;
         }
-//        u.putByRow(nsTableName, "primary_key_index", this.familyColumns[0], "primary_key_index", String.valueOf(primaryKeyIndex));
     }
 
     public void printInfo(String info) {
